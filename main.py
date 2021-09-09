@@ -1,6 +1,16 @@
 import requests
 import json
 import urllib
+import pandas as pd
+
+# Use the filters as it is only possible to extract 1000 companies at a time.
+
+# Decide whether you want the export as a json or csv file
+export_type = "csv "
+
+# enter the path for the export file
+file_path = "current_dir"
+
 
 # insert the following filters as a string as they are published at ycombinator.com.
 # Seperate them by a comma. ["S21", "S20"]
@@ -8,12 +18,12 @@ import urllib
 # if all you want all batches insert nothing. If you want specific batches,
 # S21, W21, S20, W20, S19, W19, S18, W18, S17, W17, IK12, S16, W16, S15, W15, S14, W14,
 # S13, W13,S12, W12, S11, W11, S10, W10, S09, W09, S08, W08, S07, W07, S06, W06, S05
-batch = ["S20", "S21"]
+batch = []
 
 
 # if all you want all industries insert nothing for certain industries choose between B2B Software,
 # Services, Education, Consumer, Healthcare, Real Estate, Construction, Financial Technology, Industrials or Government.
-industries = ["Financial Technology"]
+industries = []
 
 # Filter after different status with the following Active, Public, Acquired & Inactive Status.
 # if all you want all companies regardless the status let the filter empty
@@ -35,12 +45,13 @@ def create_facet_filters(batch, industries, status, regions):
         "regions": regions,
     }
 
-    filters = dict([(k, v) for k, v in filters.items() if len(v) > 0])
+    for key, value in filters.items():
+        # skiping a filter if filter is emtpy
+        if len(value) == 0:
+            continue
 
-    for key in filters.keys():
-        value_array = filters[key]
-        value_array = list(map(lambda x: f"{key}:" + x, value_array))
-        facet_filters.append(value_array)
+        value = list(map(lambda x: f"{key}:" + x, value))
+        facet_filters.append(value)
 
     return json.dumps(facet_filters)
 
@@ -115,12 +126,32 @@ def request_data_companies():
     return json.loads(response.text)
 
 
-def clean_data():
+def export_df_to_csv(df, file_path=file_path, export_type=export_type):
+    df.to_csv(
+        path_or_buf=f"{file_path}.{export_type}",
+        encoding="utf-8",
+        sep="\t",
+        index=False,
+    )
+
+
+def export_df_to_json(df, file_path=file_path, export_type=export_type):
+    df.to_json(path_or_buf=f"{file_path}.{export_type}")
+
+
+def clean_and_export_data():
+    # Clean data process - export to json and pandas?
     response = request_data_companies()
-    response_01 = response["results"][0]
-    print(response_01)
-    # uuid = response[0][0]["id"]
-    # print(uuid)
+    response = response["results"][0]["hits"]
+    # convert response to pandas dataframe and clean data
+    data = pd.json_normalize(response)
+    data = data.iloc[:, :-4]
+
+    if export_type == "csv":
+        export_df_to_csv(data)
+    else:
+        export_df_to_json(data)
 
 
-clean_data()
+clean_and_export_data()
+# EOF
