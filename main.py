@@ -6,7 +6,7 @@ import pandas as pd
 # Use the filters as it is only possible to extract 1000 companies at a time.
 
 # Decide whether you want the export as a json or csv file
-export_type = "csv "
+export_type = "csv"
 
 # enter the path for the export file
 file_path = "current_dir"
