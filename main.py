@@ -18,21 +18,21 @@ file_path = "current_dir"
 # if all you want all batches insert nothing. If you want specific batches,
 # S21, W21, S20, W20, S19, W19, S18, W18, S17, W17, IK12, S16, W16, S15, W15, S14, W14,
 # S13, W13,S12, W12, S11, W11, S10, W10, S09, W09, S08, W08, S07, W07, S06, W06, S05
-batch = []
+batch = ["S21", "W21"]
 
 
 # if all you want all industries insert nothing for certain industries choose between B2B Software,
 # Services, Education, Consumer, Healthcare, Real Estate, Construction, Financial Technology, Industrials or Government.
-industries = []
+industries = ["Education", "Consumer"]
 
 # Filter after different status with the following Active, Public, Acquired & Inactive Status.
 # if all you want all companies regardless the status let the filter empty
-status = []
+status = ["Active"]
 
 
 # if all you want all (anywhere) insert nothing. If you want specific choose between,
 # North America, Asia, Europe, Africa, Central America, South America, Oceania
-regions = []
+regions = ["North America", "Asia", "Europe"]
 
 
 def create_facet_filters(batch, industries, status, regions):
